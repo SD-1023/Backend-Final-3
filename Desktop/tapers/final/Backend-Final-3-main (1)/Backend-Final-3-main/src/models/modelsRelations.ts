@@ -27,11 +27,11 @@ userModel.hasMany(addressModel, { foreignKey: 'userID' })
 addressModel.belongsTo(userModel, { foreignKey: 'userID' })
 
 
-userModel.hasMany(orderModel, { foreignKey: 'userID' })
-orderModel.belongsTo(userModel, { foreignKey: 'userID' })
+//userModel.hasMany(orderModel, { foreignKey: 'userID' })
+//orderModel.belongsTo(userModel, { foreignKey: 'userID' })
 
-orderModel.hasMany(orderItemModel, { foreignKey: 'orderID' })
-orderItemModel.belongsTo(orderModel, { foreignKey: 'orderID' })
+//orderModel.hasMany(orderItemModel, { foreignKey: 'orderID' })
+//orderItemModel.belongsTo(orderModel, { foreignKey: 'orderID' })
 
 productModel.hasMany(imageModel, { foreignKey: 'productID' })
 imageModel.belongsTo(productModel, { foreignKey: 'productID' })
@@ -42,8 +42,8 @@ ratingModel.belongsTo(productModel,{ foreignKey: 'productID' })
 //cartModel.hasMany(productModel, { foreignKey: 'productID' })
 //productModel.belongsTo(cartModel, { foreignKey: 'productID' })
 
-wishListModel.hasMany(productModel, { foreignKey: 'productID' })
-productModel.belongsTo(wishListModel, { foreignKey: 'productID' })
+//wishListModel.hasMany(productModel, { foreignKey: 'productID' })
+//productModel.belongsTo(wishListModel, { foreignKey: 'productID' })
 
 brandModel.hasMany(productModel, { foreignKey: 'brandID' })
 productModel.belongsTo(brandModel, { foreignKey: 'brandID' })
@@ -62,7 +62,8 @@ export {
     orderItemModel, 
     productModel, 
     imageModel,
-    categoryModel
+    categoryModel,
+    brandModel //added by seema
 }
 // user has many sessions
 // user has many carts

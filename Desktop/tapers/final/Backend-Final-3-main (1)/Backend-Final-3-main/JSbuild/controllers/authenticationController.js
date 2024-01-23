@@ -56,7 +56,7 @@ var express_1 = __importDefault(require("express"));
 var router = express_1.default.Router();
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var uuid_1 = require("uuid");
-var sessionMiddleware_1 = require("../../src/middlewares/sessionMiddleware");
+var sessionMiddleware_1 = require("../middlewares/sessionMiddleware");
 function findUser(email) {
     return __awaiter(this, void 0, void 0, function () {
         var foundUser, err_1;

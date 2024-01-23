@@ -8,15 +8,7 @@ var wishListModel = db_1.sequelize.define('wishList', {
         type: sequelize_1.DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-    },
-    userID: {
-        type: sequelize_1.DataTypes.INTEGER,
-        allowNull: false,
-    },
-    productID: {
-        type: sequelize_1.DataTypes.INTEGER,
-        allowNull: false,
-    },
+    }
 }, {
     timestamps: false,
     tableName: 'wishList'

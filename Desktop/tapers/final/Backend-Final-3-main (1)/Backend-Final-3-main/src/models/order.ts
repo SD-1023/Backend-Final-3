@@ -9,10 +9,11 @@ interface orderInstance extends Model {
   email: string,
   mobile: string,
   addressID: number,
-  status: string,
+  state: string,  // state
+  isPaid:boolean,
   date: string,
   paymentMethod: string,
-  subTotal: number
+  grandTotal: number
 }
 const orderModel = sequelize.define<orderInstance>('orderDetails', {
     orderID: {
@@ -43,7 +44,7 @@ const orderModel = sequelize.define<orderInstance>('orderDetails', {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    status: {
+    state: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -59,7 +60,7 @@ const orderModel = sequelize.define<orderInstance>('orderDetails', {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    subTotal: {
+    grandTotal: {
       type: DataTypes.FLOAT,
       allowNull: false
     }

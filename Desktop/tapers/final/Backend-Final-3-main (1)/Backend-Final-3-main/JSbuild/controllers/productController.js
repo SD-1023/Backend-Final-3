@@ -47,14 +47,109 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRateAndReview = exports.rateProduct = exports.getSpecificProduct = exports.handPicked = exports.getTrendyProducts = void 0;
+exports.getRateAndReview = exports.rateProduct = exports.getSpecificProduct = exports.handPicked = exports.getTrendyProducts = exports.getCatogeries = exports.getOrders = exports.getAddress = void 0;
 var db_1 = require("../config/db");
 var modelsRelations_1 = require("../models/modelsRelations");
 var wishlistUtils_1 = require("../utils/wishlistUtils");
 var sequelize_1 = require("sequelize");
+var getAddress = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var userID, address, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                userID = req.user.userID;
+                if (!userID) {
+                    return [2 /*return*/, res.status(400).json({ error: 'useris is required' })];
+                }
+                return [4 /*yield*/, modelsRelations_1.addressModel.findAll({
+                        attributes: ['street', 'state', 'city', 'pinCode'],
+                        include: [
+                            {
+                                model: modelsRelations_1.userModel,
+                                attributes: ['firstName', 'lastName', 'mobile'],
+                                required: false
+                            }
+                        ],
+                        where: {
+                            userID: userID
+                        }
+                    })];
+            case 1:
+                address = _a.sent();
+                if (!address) {
+                    return [2 /*return*/, res.status(400).json('Not Found')];
+                }
+                return [2 /*return*/, res.json({ address: address })];
+            case 2:
+                error_1 = _a.sent();
+                console.error(error_1);
+                return [2 /*return*/, res.status(500).json({ error: 'Internal Server Error' })];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAddress = getAddress;
+var getOrders = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var state, userID, orders, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                state = req.query.state;
+                userID = req.user.userID;
+                if (!userID) {
+                    return [2 /*return*/, res.status(400).json({ error: 'useris is required' })];
+                }
+                return [4 /*yield*/, modelsRelations_1.orderModel.findAll({
+                        attributes: ['orderID', 'date', 'grandTotal', 'isPaid'],
+                        where: {
+                            state: state,
+                            isPaid: true
+                        },
+                    })];
+            case 1:
+                orders = _a.sent();
+                if (!orders) {
+                    res.status(400).json("Not Found");
+                }
+                res.json(orders);
+                return [3 /*break*/, 3];
+            case 2:
+                error_2 = _a.sent();
+                console.error('Error fetching all orders:', error_2.message);
+                res.status(500).json({ error: 'Internal Server Error' });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getOrders = getOrders;
+var getCatogeries = function (req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var category, err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, modelsRelations_1.categoryModel.findAll({
+                            attributes: ["name"],
+                        })];
+                case 1:
+                    category = _a.sent();
+                    return [2 /*return*/, res.status(200).json({ "category": category })];
+                case 2:
+                    err_1 = _a.sent();
+                    return [2 /*return*/, res.status(500).json({ error: 'Failed to get category', details: err_1.message })];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+};
+exports.getCatogeries = getCatogeries;
 var getTrendyProducts = function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var productsWithIsAdded, page, pageSize, trendyProducts, count, err_1;
+        var productsWithIsAdded, page, pageSize, trendyProducts, count, err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -98,8 +193,8 @@ var getTrendyProducts = function (req, res) {
                     productsWithIsAdded = _a.sent();
                     return [2 /*return*/, res.status(200).json({ "count": count, "products": productsWithIsAdded })];
                 case 3:
-                    err_1 = _a.sent();
-                    return [2 /*return*/, res.status(500).json({ error: 'Failed to get products', details: err_1.message })];
+                    err_2 = _a.sent();
+                    return [2 /*return*/, res.status(500).json({ error: 'Failed to get products', details: err_2.message })];
                 case 4: return [2 /*return*/];
             }
         });
@@ -135,25 +230,24 @@ function getProductsAndIsAdded(req, products) {
                 case 1:
                     userID = _a.sent();
                     if (!userID) {
-                        return [2 /*return*/, products];
+                        return [2 /*return*/, products.map(function (product, index) { return (__assign(__assign({}, product.toJSON()), { isAddedToWishList: 0 })); })];
                     }
                     isAddedPromises = products.map(function (product) { return (0, wishlistUtils_1.isAdedToWishlist)(userID, product.productID); });
                     return [4 /*yield*/, Promise.all(isAddedPromises)];
                 case 2:
                     isAddedResults = _a.sent();
-                    return [2 /*return*/, products.map(function (product, index) { return (__assign(__assign({}, product.toJSON()), { isAdded: isAddedResults[index] })); })];
+                    return [2 /*return*/, products.map(function (product, index) { return (__assign(__assign({}, product.toJSON()), { isAddedToWishList: isAddedResults[index] })); })];
             }
         });
     });
 }
-//handPicked
 var handPicked = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var productsWithIsAdded, categoryName, page, pageSize, category, handPickedProducts, count, error_1;
+    var productsWithIsAdded, categoryName, page, pageSize, category, handPickedProducts, _i, handPickedProducts_1, product, ratingCount, count, error_3;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _c.trys.push([0, 6, , 7]);
+                _c.trys.push([0, 10, , 11]);
                 productsWithIsAdded = [];
                 categoryName = req.query.category;
                 page = Number(req.query.page) || 1;
@@ -166,7 +260,7 @@ var handPicked = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                     })];
             case 1:
                 category = _c.sent();
-                if (!category) return [3 /*break*/, 4];
+                if (!category) return [3 /*break*/, 8];
                 return [4 /*yield*/, modelsRelations_1.productModel.findAll({
                         attributes: [
                             "productID",
@@ -174,15 +268,17 @@ var handPicked = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                             "subTitle",
                             "price",
                             "discount",
-                            [db_1.sequelize.literal('(SELECT AVG(rating) FROM ratings WHERE ratings.productID = products.productID)'), 'avgRating'],
+                            [db_1.sequelize.fn('COALESCE', db_1.sequelize.fn('AVG', db_1.sequelize.col("ratings.rating")), 0), 'avgRating'],
+                            [db_1.sequelize.fn('COUNT', db_1.sequelize.col("ratings.rating")), 'ratingCount'],
+                            [db_1.sequelize.literal('(SELECT imgPath FROM images WHERE images.productID = products.productID AND images.position = 1 LIMIT 1)'), 'imgPath'], // to make the response
                         ],
                         include: [
                             {
                                 model: modelsRelations_1.ratingModel,
-                                attributes: [
-                                    [db_1.sequelize.literal('(SELECT count(rating) FROM ratings WHERE ratings.productID = products.productID)'), 'ratingsCount'],
-                                ],
+                                attributes: [],
+                                as: "ratings",
                                 where: { rating: (_a = {}, _a[sequelize_1.Op.gt] = 4.5, _a) },
+                                required: false
                             },
                             {
                                 model: modelsRelations_1.categoryModel,
@@ -193,7 +289,7 @@ var handPicked = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                             },
                             {
                                 model: modelsRelations_1.imageModel,
-                                attributes: ['imgPath'],
+                                attributes: [],
                                 where: db_1.sequelize.literal('position = 1'),
                                 required: false
                             }
@@ -201,33 +297,52 @@ var handPicked = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                         where: {
                             price: (_b = {}, _b[sequelize_1.Op.lt] = 100, _b),
                         },
+                        group: ['productID'],
                         offset: (page - 1) * pageSize,
                         limit: pageSize,
-                        order: [["productID", "ASC"]]
+                        order: [[db_1.sequelize.literal('avgRating'), 'DESC']],
+                        subQuery: false
                     })];
             case 2:
                 handPickedProducts = _c.sent();
+                _i = 0, handPickedProducts_1 = handPickedProducts;
+                _c.label = 3;
+            case 3:
+                if (!(_i < handPickedProducts_1.length)) return [3 /*break*/, 6];
+                product = handPickedProducts_1[_i];
+                return [4 /*yield*/, modelsRelations_1.ratingModel.count({
+                        where: {
+                            productID: product.productID,
+                        },
+                    })];
+            case 4:
+                ratingCount = _c.sent();
+                _c.label = 5;
+            case 5:
+                _i++;
+                return [3 /*break*/, 3];
+            case 6:
                 count = handPickedProducts.length;
                 return [4 /*yield*/, getProductsAndIsAdded(req, handPickedProducts)];
-            case 3:
+            case 7:
                 productsWithIsAdded = _c.sent();
                 return [2 /*return*/, res.status(200).json({
-                        "count": count,
-                        "products": productsWithIsAdded
+                        "totalCount": count,
+                        "products": productsWithIsAdded,
                     })];
-            case 4: return [2 /*return*/, res.status(404).json({ error: 'Not found' })];
-            case 5: return [3 /*break*/, 7];
-            case 6:
-                error_1 = _c.sent();
-                console.error(error_1);
-                throw error_1;
-            case 7: return [2 /*return*/];
+            case 8: return [2 /*return*/, res.status(404).json('No Products Found')];
+            case 9: return [3 /*break*/, 11];
+            case 10:
+                error_3 = _c.sent();
+                res.status(500).json('Internal Server Error');
+                return [3 /*break*/, 11];
+            case 11: return [2 /*return*/];
         }
     });
 }); };
 exports.handPicked = handPicked;
 var getSpecificProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var productid, Product, error_2;
+    var productid, Product, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -238,74 +353,85 @@ var getSpecificProduct = function (req, res) { return __awaiter(void 0, void 0, 
                     return [2 /*return*/];
                 }
                 return [4 /*yield*/, modelsRelations_1.productModel.findOne({
-                        where: {
-                            productID: productid
-                        },
+                        attributes: [
+                            "productID",
+                            "title",
+                            "subTitle",
+                            "description",
+                            "price",
+                            "discount",
+                        ],
                         include: [
                             {
                                 model: modelsRelations_1.imageModel,
-                                attributes: ['imgPath', 'position'],
+                                attributes: ['imageID', 'imgPath', 'position'],
                                 required: false
                             },
                             {
                                 model: modelsRelations_1.ratingModel,
-                                attributes: [
-                                    [db_1.sequelize.literal('(SELECT count(rating) FROM ratings WHERE ratings.productID = products.productID)'), 'ratingsCount'],
-                                ]
+                                attributes: [], as: "ratings",
+                                required: false
                             }
-                        ]
+                        ],
+                        where: {
+                            productID: productid
+                        },
+                        group: ['productID', 'imageID'],
+                        subQuery: false
                     })];
             case 1:
                 Product = _a.sent();
                 return [2 /*return*/, res.status(200).json({ Product: Product })];
             case 2:
-                error_2 = _a.sent();
-                console.error(error_2);
-                res.status(500).json({ error: 'Internal Server Error' });
-                return [2 /*return*/];
+                error_4 = _a.sent();
+                return [2 /*return*/, res.status(500).json('Internal Server Error')];
             case 3: return [2 /*return*/];
         }
     });
 }); };
 exports.getSpecificProduct = getSpecificProduct;
 var rateProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var rate, productID, userID, newRating, error_3;
+    var rate, productID, userID, existRate, newRating, error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
+                _a.trys.push([0, 5, , 6]);
                 rate = req.body.rating;
                 productID = req.params.productID;
                 userID = req.user.userID;
                 // Validate input
                 if (!userID || !rate || !productID) {
-                    return [2 /*return*/, res.status(400).json({ error: 'Invalid input. Please provide userID, rating, and productID.' })];
+                    return [2 /*return*/, res.status(400).json({ error: 'Invalid input' })];
                 }
+                return [4 /*yield*/, modelsRelations_1.ratingModel.findOne({
+                        where: {
+                            userID: userID,
+                            productID: productID,
+                        },
+                    })];
+            case 1:
+                existRate = _a.sent();
+                if (!!existRate) return [3 /*break*/, 3];
                 return [4 /*yield*/, modelsRelations_1.ratingModel.create({
                         userID: userID,
                         rating: rate,
                         productID: productID,
                     })];
-            case 1:
-                newRating = _a.sent();
-                if (newRating) {
-                    res.status(200).json({
-                        message: "Rated Successfully",
-                    });
-                }
-                return [3 /*break*/, 3];
             case 2:
-                error_3 = _a.sent();
-                console.error(error_3);
-                res.status(500).json({ error: 'Internal Server Error' });
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                newRating = _a.sent();
+                return [2 /*return*/, res.status(200).json("Rated Successfully")];
+            case 3: return [2 /*return*/, res.status(400).json('Already Rated')];
+            case 4: return [3 /*break*/, 6];
+            case 5:
+                error_5 = _a.sent();
+                return [2 /*return*/, res.status(500).json('Internal Server Error')];
+            case 6: return [2 /*return*/];
         }
     });
 }); };
 exports.rateProduct = rateProduct;
 var getRateAndReview = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var productID, page, pageSize, count, reviews, error_4;
+    var productID, page, pageSize, count, reviews, error_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -334,13 +460,14 @@ var getRateAndReview = function (req, res) { return __awaiter(void 0, void 0, vo
                     })];
             case 2:
                 reviews = _a.sent();
-                res.status(200).json({ count: count, reviews: reviews });
-                return [3 /*break*/, 4];
+                return [2 /*return*/, res.status(200).json({
+                        "totalCount": count,
+                        "reviews": reviews
+                    })];
             case 3:
-                error_4 = _a.sent();
-                console.error(error_4);
-                res.status(500).json({ error: 'Internal Server Error' });
-                return [3 /*break*/, 4];
+                error_6 = _a.sent();
+                console.error(error_6);
+                return [2 /*return*/, res.status(500).json('Internal Server Error')];
             case 4: return [2 /*return*/];
         }
     });

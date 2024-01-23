@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.categoryModel = exports.imageModel = exports.productModel = exports.orderItemModel = exports.orderModel = exports.addressModel = exports.ratingModel = exports.wishListModel = exports.cartModel = exports.sessionModel = exports.userModel = void 0;
+exports.brandModel = exports.categoryModel = exports.imageModel = exports.productModel = exports.orderItemModel = exports.orderModel = exports.addressModel = exports.ratingModel = exports.wishListModel = exports.cartModel = exports.sessionModel = exports.userModel = void 0;
 var user_1 = require("./user");
 Object.defineProperty(exports, "userModel", { enumerable: true, get: function () { return user_1.userModel; } });
 var session_1 = require("./session");
@@ -22,30 +22,32 @@ Object.defineProperty(exports, "productModel", { enumerable: true, get: function
 var images_1 = require("./images");
 Object.defineProperty(exports, "imageModel", { enumerable: true, get: function () { return images_1.imageModel; } });
 var brand_1 = require("./brand");
+Object.defineProperty(exports, "brandModel", { enumerable: true, get: function () { return brand_1.brandModel; } });
 var category_1 = require("./category");
 Object.defineProperty(exports, "categoryModel", { enumerable: true, get: function () { return category_1.categoryModel; } });
 user_1.userModel.hasMany(session_1.sessionModel, { foreignKey: 'userID' });
 session_1.sessionModel.belongsTo(user_1.userModel, { foreignKey: 'userID' });
 user_1.userModel.hasMany(cart_1.cartModel, { foreignKey: 'userID' });
 cart_1.cartModel.belongsTo(user_1.userModel, { foreignKey: 'userID' });
-user_1.userModel.hasMany(wishList_1.wishListModel, { foreignKey: 'userID' });
-wishList_1.wishListModel.belongsTo(user_1.userModel, { foreignKey: 'userID' });
 user_1.userModel.hasMany(rating_1.ratingModel, { foreignKey: 'userID' });
 rating_1.ratingModel.belongsTo(user_1.userModel, { foreignKey: 'userID' });
 user_1.userModel.hasMany(address_1.addressModel, { foreignKey: 'userID' });
 address_1.addressModel.belongsTo(user_1.userModel, { foreignKey: 'userID' });
-user_1.userModel.hasMany(order_1.orderModel, { foreignKey: 'userID' });
-order_1.orderModel.belongsTo(user_1.userModel, { foreignKey: 'userID' });
-order_1.orderModel.hasMany(orderItem_1.orderItemModel, { foreignKey: 'orderID' });
-orderItem_1.orderItemModel.belongsTo(order_1.orderModel, { foreignKey: 'orderID' });
+//userModel.hasMany(orderModel, { foreignKey: 'userID' })
+//orderModel.belongsTo(userModel, { foreignKey: 'userID' })
+//orderModel.hasMany(orderItemModel, { foreignKey: 'orderID' })
+//orderItemModel.belongsTo(orderModel, { foreignKey: 'orderID' })
 product_1.productModel.hasMany(images_1.imageModel, { foreignKey: 'productID' });
 images_1.imageModel.belongsTo(product_1.productModel, { foreignKey: 'productID' });
 product_1.productModel.hasMany(rating_1.ratingModel, { foreignKey: 'productID' });
 rating_1.ratingModel.belongsTo(product_1.productModel, { foreignKey: 'productID' });
-cart_1.cartModel.hasMany(product_1.productModel, { foreignKey: 'productID' });
-product_1.productModel.belongsTo(cart_1.cartModel, { foreignKey: 'productID' });
-wishList_1.wishListModel.hasMany(product_1.productModel, { foreignKey: 'productID' });
-product_1.productModel.belongsTo(wishList_1.wishListModel, { foreignKey: 'productID' });
+//cartModel.hasMany(productModel, { foreignKey: 'productID' })
+//productModel.belongsTo(cartModel, { foreignKey: 'productID' })
+user_1.userModel.belongsToMany(product_1.productModel, { through: wishList_1.wishListModel });
+product_1.productModel.belongsToMany(user_1.userModel, { through: wishList_1.wishListModel });
+// Optionally, you can define the reverse associations if needed
+wishList_1.wishListModel.belongsTo(user_1.userModel);
+wishList_1.wishListModel.belongsTo(product_1.productModel);
 brand_1.brandModel.hasMany(product_1.productModel, { foreignKey: 'brandID' });
 product_1.productModel.belongsTo(brand_1.brandModel, { foreignKey: 'brandID' });
 category_1.categoryModel.hasMany(product_1.productModel, { foreignKey: 'categoryID' });

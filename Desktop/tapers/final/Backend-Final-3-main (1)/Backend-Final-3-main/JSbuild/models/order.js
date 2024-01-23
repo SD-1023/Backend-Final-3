@@ -32,7 +32,7 @@ var orderModel = db_1.sequelize.define('orderDetails', {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
     },
-    status: {
+    state: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
@@ -48,7 +48,7 @@ var orderModel = db_1.sequelize.define('orderDetails', {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
-    subTotal: {
+    grandTotal: {
         type: sequelize_1.DataTypes.FLOAT,
         allowNull: false
     }

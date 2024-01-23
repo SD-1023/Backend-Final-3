@@ -7,6 +7,6 @@ var express_1 = __importDefault(require("express"));
 var router = express_1.default.Router();
 var wishListController_1 = require("../controllers/wishListController");
 var sessionMiddleware_1 = require("../middlewares/sessionMiddleware");
-router.get('/', sessionMiddleware_1.sessionMiddleware, wishListController_1.getWishList);
-router.post('/:productID', sessionMiddleware_1.sessionMiddleware, wishListController_1.toggleWishlist);
+router.get('/wishList', sessionMiddleware_1.sessionMiddleware, wishListController_1.getWishList);
+// router.post('/:productID', sessionMiddleware, toggleWishlist)
 exports.default = router;

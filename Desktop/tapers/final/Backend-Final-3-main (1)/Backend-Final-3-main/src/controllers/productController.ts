@@ -1,10 +1,12 @@
 import { sequelize } from "../config/db"
-import { productModel, imageModel, ratingModel, sessionModel, categoryModel, userModel, wishListModel } from "../models/modelsRelations"
+import { productModel, imageModel, ratingModel, sessionModel, categoryModel, userModel } from "../models/modelsRelations"
 import { Request, Response } from 'express'
 import { isAdedToWishlist } from '../utils/wishlistUtils'
-
 import { Op } from 'sequelize';
 import { CustomRequest } from '../middlewares/sessionMiddleware'
+
+
+
 
 export const getTrendyProducts = async function (req: Request, res: Response): Promise<any> {
   try {
@@ -71,7 +73,7 @@ async function getProductsAndIsAdded(req: Request, products: any[]): Promise<any
       ...product.toJSON(),
       isAddedToWishList: 0,
     }))
-    
+
   }
 
   const isAddedPromises = products.map(product => isAdedToWishlist(userID, product.productID))
@@ -228,7 +230,17 @@ export const rateProduct = async (req: CustomRequest, res: Response): Promise<an
       return res.status(400).json({ error: 'Invalid input' });
     }
 
-    const existRate = await ratingModel.findOne({
+    const existProduct= await productModel.findOne({
+      where: {
+        productID: productID,
+      },
+    });
+
+    if(!existProduct){
+       return res.status(404).json(' Product Not Found');
+    }
+
+    const existRate = await ratingModel.findOne({ 
       where: {
         userID: userID,
         productID: productID,
@@ -288,15 +300,15 @@ export const getRateAndReview = async (req: Request, res: Response): Promise<any
       order: [["rating", "DESC"]],
     });
 
-   return res.status(200).json(
-      { "totalCount":count, 
-        "reviews":reviews }
+    return res.status(200).json(
+      {
+        "totalCount": count,
+        "reviews": reviews
+      }
     );
 
   } catch (error) {
     console.error(error);
-    return  res.status(500).json( 'Internal Server Error' );
+    return res.status(500).json('Internal Server Error');
   }
 }
-
-

@@ -3,19 +3,25 @@ import bodyParser from 'body-parser'
 import { syncModels } from './config/db'
 import userRoutes from './controllers/authenticationController'
 import productRoutes from './routes/productRoutes'
-import wishListRoutes from './routes/productRoutes'
-
+import wishListRoutes from './routes/wishListRoutes'
 import cartRoutes from './routes/cartRoutes'
-const app = express()
+import orderRoutes from './routes/orderRoutes'
+import addressRoutes from './routes/addressRoutes'
+import {fillTables} from './models/seedsFaker'
 
+fillTables();
+const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
+
+
 app.use('/', userRoutes)
 app.use('/products', productRoutes)
-app.use('/cart', cartRoutes )
 app.use('/wishList', wishListRoutes)
-
+app.use('/cart', cartRoutes )
+app.use('/orders', orderRoutes)
+app.use('/address',addressRoutes )
 
 syncModels()
   .then(() => {

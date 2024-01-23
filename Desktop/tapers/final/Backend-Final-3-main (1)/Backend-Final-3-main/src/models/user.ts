@@ -8,7 +8,9 @@ interface userInstance extends Model {
   firstName: string,
   lastName: string,
   email: string,
-  password: string
+  password: string,
+  mobile: string,
+  image: string
 }
 const userModel = sequelize.define<userInstance>('users', {
   userID: {
@@ -32,6 +34,12 @@ const userModel = sequelize.define<userInstance>('users', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  mobile: {
+    type: DataTypes.STRING,
+  },
+  image: {
+    type: DataTypes.STRING
+  }
 }, {
   timestamps: false,
   tableName: 'users'
@@ -48,7 +56,9 @@ userModel.beforeSave(async (thisUser: any) => {
 userModel.beforeValidate(async (thisUser: any) => {
   console.log(thisUser.password)
   if (thisUser.isNewRecord || thisUser.changed('password')) {
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    //const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordPattern = '^(?=.*[a-z]).{4,}$'
     if (!thisUser.password.match(passwordPattern)) {
       throw new Error('Password does not meet requirements: It must be at least 8 characters long and include a mix of uppercase and lowercase letters, numbers, and special characters');
     }

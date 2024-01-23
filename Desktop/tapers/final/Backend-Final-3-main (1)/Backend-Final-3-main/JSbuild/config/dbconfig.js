@@ -4,7 +4,7 @@ var dbConfig = {
     HOST: 'localhost',
     USER: 'root',
     PASSWORD: 'seema123.I',
-    DB: 'coraldatabase',
+    DB: 'sprintnew',
     dialect: 'mysql',
     pool: {
         max: 10,

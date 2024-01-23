@@ -46,7 +46,7 @@ var getWishList = function (req, res) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    userID = req.user.userID;
+                    userID = 1;
                     if (!userID) {
                         res.status(400).json({ error: ' userid  required.' });
                         return [2 /*return*/];
@@ -55,7 +55,7 @@ var getWishList = function (req, res) {
                             attributes: [],
                             include: [{
                                     model: modelsRelations_1.productModel,
-                                    attributes: ['title', 'subTitle', 'price', 'quantity'],
+                                    attributes: ["productID", "title", "subTitle", "price", "quantity"],
                                 }],
                             where: {
                                 userID: userID,
@@ -64,7 +64,7 @@ var getWishList = function (req, res) {
                 case 1:
                     Wishlists = _a.sent();
                     if (Wishlists) {
-                        return [2 /*return*/, res.status(200).json(Wishlists)];
+                        return [2 /*return*/, res.status(200).json("Wishlists")];
                     }
                     else {
                         return [2 /*return*/, res.status(404).json({ error: " No wishList Found for ".concat(req.user.firstName, " ") })];

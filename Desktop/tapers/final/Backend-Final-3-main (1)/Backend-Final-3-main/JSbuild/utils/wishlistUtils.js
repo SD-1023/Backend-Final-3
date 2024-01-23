@@ -51,12 +51,10 @@ var isAdedToWishlist = function isAdedToWishlist(userID, productID) {
                     })];
                 case 1:
                     isAdded = _a.sent();
-                    if (isAdded) {
-                        console.log("clabla");
-                        return [2 /*return*/, true];
-                    }
+                    if (isAdded)
+                        return [2 /*return*/, 1];
                     else
-                        return [2 /*return*/, false];
+                        return [2 /*return*/, 0];
                     return [2 /*return*/];
             }
         });

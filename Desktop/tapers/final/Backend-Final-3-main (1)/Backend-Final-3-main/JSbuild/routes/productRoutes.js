@@ -7,6 +7,9 @@ var express_1 = __importDefault(require("express"));
 var router = express_1.default.Router();
 var sessionMiddleware_1 = require("../middlewares/sessionMiddleware");
 var productController_1 = require("../controllers/productController");
+//router.get('/address',sessionMiddleware,getAddress)
+//router.get('/orders',getOrders)
+router.get('/catogeries', productController_1.getCatogeries);
 router.get('/trendy', productController_1.getTrendyProducts);
 router.get('/handpicked', productController_1.handPicked);
 router.get('/:productID', productController_1.getSpecificProduct);
